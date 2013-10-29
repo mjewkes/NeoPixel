@@ -7,7 +7,7 @@
 // NEO_GRB Pixels are wired for GRB bitstream
 // NEO_KHZ400 400 KHz bitstream (e.g. FLORA pixels)
 // NEO_KHZ800 800 KHz bitstream (e.g. High Density LED strip)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(720, 10, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(2*240, 5, NEO_GRB + NEO_KHZ800);
 const int waveNums = 10;
 uint16_t wavelets[] = {0, 80, 160, 240, 320, 400,480,560,620,700};
 int glowdir =1;
@@ -16,6 +16,23 @@ void glow(){
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, intensity, 0,0);
   }
+//  strip.show();
+  delay(50);
+}
+void setup() {
+  strip.begin();
+  strip.show(); // Initialize all pixels to 'off'
+}
+int phase =0;
+void crazy(){
+  for(uint16_t i=0; i<strip.numPixels(); i++) {
+    int purplepower = random(0,4);
+
+    strip.setPixelColor(i, (purplepower*purplepower*purplepower)*intensity/50,0,random(0,50));
+  }
+  delay(55-intensity);
+}
+void updatePhase(){
   intensity+=glowdir;
   if (intensity>= 50){
     glowdir=-1;
@@ -23,24 +40,41 @@ void glow(){
   if (intensity<=0){
     glowdir=1;
   }
-  strip.show();
-  delay(5);
-}
-void setup() {
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-}
 
-
+}
+int splotch=0;
+const int splotchSize=50;
+void boom(){
+  if (intensity==0){
+    splotch=random(splotchSize,strip.numPixels()-splotchSize);
+  }
+  for(uint16_t i=0; i<splotchSize; i++) {
+    int pixel = (splotch-splotchSize/2)+i;
+    strip.setPixelColor(pixel, intensity, 0,0);
+  }
+}
 void loop() {
- // glow();
-  waves();
+  rainbowCycle(1);
+//  updatePhase();
+//  glow();
+//  waves();
+//  crazy();
+  //boom();
+//  SpamWhite();
+  strip.show();
   //colorWipe(strip.Color(200,50,0),20);
 //  colorWipe(strip.Color(255,0,0),20);
 }
 const int waveSize=20;
 const int waveHalf = 10;
 int val;
+void SpamWhite(){
+      strip.setPixelColor(random(0,strip.numPixels()), 255,255,255);
+  //    strip.setPixelColor(random(0,strip.numPixels()), 255,255,255);
+ //     strip.setPixelColor(random(0,strip.numPixels()), 255,255,255);
+ //     strip.setPixelColor(random(0,strip.numPixels()), 255,255,255);
+
+}
 void waves(){
   static int dir = 1;
   
